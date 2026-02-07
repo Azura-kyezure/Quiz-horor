@@ -3,213 +3,244 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiz Horor - Uji Nyali Kamu</title>
+<title>Horror RPG Ultimate</title>
 
 <style>
 body {
-    background-color: black;
+    margin: 0;
+    background: black;
     color: white;
-    font-family: 'Courier New', monospace;
+    font-family: monospace;
+    overflow: hidden;
     text-align: center;
-    padding: 20px;
 }
 
 .container {
-    max-width: 600px;
+    max-width: 750px;
     margin: auto;
-    background: #111;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 20px red;
+    margin-top: 30px;
 }
 
 button {
-    display: block;
     width: 100%;
-    margin: 10px 0;
-    padding: 10px;
+    margin: 8px 0;
+    padding: 12px;
     background: darkred;
-    color: white;
     border: none;
+    color: white;
     cursor: pointer;
-    transition: 0.3s;
+    transition: 0.2s;
 }
 
 button:hover {
-    background: red;
+    background: crimson;
 }
 
-#result {
-    font-size: 20px;
-    margin-top: 20px;
+#stats {
+    margin-bottom: 10px;
+}
+
+#jumpscare {
+    position: fixed;
+    top:0; left:0;
+    width:100%;
+    height:100%;
+    background:red;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    font-size:60px;
+    z-index:999;
+    animation: shake 0.2s infinite;
+}
+
+@keyframes shake {
+    0%{transform:translate(0,0);}
+    25%{transform:translate(-10px,5px);}
+    50%{transform:translate(10px,-5px);}
+    75%{transform:translate(-5px,10px);}
+    100%{transform:translate(0,0);}
+}
+
+.flicker {
+    animation: flicker 0.15s infinite;
+}
+
+@keyframes flicker {
+    0%{opacity:1;}
+    50%{opacity:0.7;}
+    100%{opacity:1;}
 }
 </style>
 </head>
-
 <body>
 
+<div id="jumpscare">😱</div>
+
 <div class="container">
-    <h1>☠ QUIZ HOROR ☠</h1>
-    <h3>Berani jawab semua pertanyaan?</h3>
+<h1>☠ HORROR RPG ☠</h1>
 
-    <div id="questionBox"></div>
-    <div id="answerButtons"></div>
-    <div id="result"></div>
+<div id="stats"></div>
+<div id="story"></div>
+<div id="choices"></div>
+<div id="ending"></div>
+
 </div>
-
-<audio id="jumpscare">
-    <source src="https://www.myinstants.com/media/sounds/movie_1.mp3" type="audio/mpeg">
-</audio>
 
 <script>
 
-const questions = [
-{
-    question: "Kamu sendirian di rumah. Tiba-tiba terdengar ketukan dari lemari. Apa yang kamu lakukan?",
-    answers: [
-        {text: "Buka lemari", correct: false},
-        {text: "Kabur keluar rumah", correct: true},
-        {text: "Cek dengan senter", correct: false},
-        {text: "Pura-pura tidak dengar", correct: false}
-    ]
-},
-{
-    question: "Jam menunjukkan pukul 03.00 pagi. Apa arti jam itu dalam cerita horor?",
-    answers: [
-        {text: "Jam makan", correct: false},
-        {text: "Jam hantu", correct: true},
-        {text: "Jam olahraga", correct: false},
-        {text: "Jam tidur biasa", correct: false}
-    ]
-},
-{
-    question: "Kamu melihat bayangan hitam di ujung lorong. Apa yang harus dilakukan?",
-    answers: [
-        {text: "Dekati bayangan", correct: false},
-        {text: "Lari secepat mungkin", correct: true},
-        {text: "Panggil namanya", correct: false},
-        {text: "Rekam dengan HP", correct: false}
-    ]
-},
-{
-    question: "Dalam film horor, siapa yang biasanya bertahan hidup?",
-    answers: [
-        {text: "Yang penasaran", correct: false},
-        {text: "Yang tenang dan cepat kabur", correct: true},
-        {text: "Yang sombong", correct: false},
-        {text: "Yang sok berani", correct: false}
-    ]
-},
-{
-    question: "Kamu mendengar suara tertawa kecil di belakangmu. Apa yang kamu lakukan?",
-    answers: [
-        {text: "Menoleh perlahan", correct: false},
-        {text: "Langsung kabur", correct: true},
-        {text: "Balas tertawa", correct: false},
-        {text: "Diam saja", correct: false}
-    ]
-},
-{
-    question: "Boneka tiba-tiba berpindah tempat. Artinya?",
-    answers: [
-        {text: "Kamu lupa naruh", correct: false},
-        {text: "Ada sesuatu yang memindahkannya", correct: true},
-        {text: "Angin", correct: false},
-        {text: "Halusinasi", correct: false}
-    ]
-},
-{
-    question: "Kenapa jangan jawab ketika ada yang memanggil namamu di malam hari?",
-    answers: [
-        {text: "Karena sopan", correct: false},
-        {text: "Bisa jadi bukan manusia", correct: true},
-        {text: "Takut dimarahi", correct: false},
-        {text: "Karena ngantuk", correct: false}
-    ]
-},
-{
-    question: "Apa tempat paling sering jadi latar horor?",
-    answers: [
-        {text: "Mall", correct: false},
-        {text: "Sekolah kosong", correct: true},
-        {text: "Pantai ramai", correct: false},
-        {text: "Kafe", correct: false}
-    ]
-},
-{
-    question: "Jika lampu berkedip sendiri?",
-    answers: [
-        {text: "Biarkan saja", correct: false},
-        {text: "Segera keluar ruangan", correct: true},
-        {text: "Mainkan saklar", correct: false},
-        {text: "Ambil foto", correct: false}
-    ]
-},
-{
-    question: "Kalau kamu melihat sosok berdiri di sudut kamar?",
-    answers: [
-        {text: "Sapa dia", correct: false},
-        {text: "Lari tanpa melihat ke belakang", correct: true},
-        {text: "Tanya siapa dia", correct: false},
-        {text: "Dekati", correct: false}
-    ]
-}
-];
+let lives = 3;
+let sanity = 100;
+let inventory = [];
+let sceneCount = 0;
+let fear = 0;
+let bossAppeared = false;
 
-let currentQuestion = 0;
-let score = 0;
+const items = ["Senter","Pisau","Kunci","Jimat"];
 
-function showQuestion() {
-    const questionBox = document.getElementById("questionBox");
-    const answerButtons = document.getElementById("answerButtons");
-
-    answerButtons.innerHTML = "";
-    questionBox.innerHTML = questions[currentQuestion].question;
-
-    questions[currentQuestion].answers.forEach(answer => {
-        const button = document.createElement("button");
-        button.innerText = answer.text;
-        button.onclick = () => selectAnswer(answer.correct);
-        answerButtons.appendChild(button);
-    });
+function updateStats(){
+document.getElementById("stats").innerHTML =
+"❤️ Nyawa: "+lives+
+" | 🧠 Sanity: "+sanity+
+"<br>🎒 Inventory: "+(inventory.length>0?inventory.join(", "):"Kosong");
 }
 
-function selectAnswer(correct) {
-    if (correct) {
-        score++;
-    } else {
-        document.getElementById("jumpscare").play();
-    }
-
-    currentQuestion++;
-
-    if (currentQuestion < questions.length) {
-        showQuestion();
-    } else {
-        showResult();
-    }
+function jumpscare(){
+const j = document.getElementById("jumpscare");
+j.style.display="flex";
+setTimeout(()=>{j.style.display="none";},400);
 }
 
-function showResult() {
-    const result = document.getElementById("result");
-    const questionBox = document.getElementById("questionBox");
-    const answerButtons = document.getElementById("answerButtons");
-
-    questionBox.innerHTML = "GAME SELESAI!";
-    answerButtons.innerHTML = "";
-
-    if (score >= 8) {
-        result.innerHTML = "😈 Kamu sangat pintar bertahan hidup! Skor: " + score;
-    } else if (score >= 5) {
-        result.innerHTML = "😨 Kamu lumayan selamat... Skor: " + score;
-    } else {
-        result.innerHTML = "☠ Kamu tidak akan bertahan di film horor! Skor: " + score;
-    }
+function randomScene(){
+if(sceneCount >= 100){
+triggerBoss();
+return;
 }
 
-showQuestion();
+sceneCount++;
+
+let randomEvent = Math.random();
+
+let storyText = "Kamu berjalan di koridor gelap... (Scene "+sceneCount+")";
+
+let choices = [];
+
+if(randomEvent < 0.3){
+storyText = "Kamu menemukan benda di lantai...";
+let item = items[Math.floor(Math.random()*items.length)];
+choices.push({
+text:"Ambil "+item,
+action:()=>{ if(!inventory.includes(item)) inventory.push(item); next(); }
+});
+choices.push({
+text:"Biarkan",
+action:()=>{ sanity -=5; next(); }
+});
+}
+else if(randomEvent < 0.6){
+storyText = "Suara aneh terdengar sangat dekat...";
+choices.push({
+text:"Lari",
+action:()=>{ lives--; sanity-=10; jumpscare(); next(); }
+});
+choices.push({
+text:"Tetap tenang",
+action:()=>{ sanity-=5; next(); }
+});
+}
+else{
+storyText = "Lorong bercabang dua.";
+choices.push({
+text:"Kiri",
+action:()=>{ fear++; next(); }
+});
+choices.push({
+text:"Kanan",
+action:()=>{ fear+=2; next(); }
+});
+}
+
+renderScene(storyText, choices);
+}
+
+function renderScene(text, choices){
+document.getElementById("story").innerHTML="<p>"+text+"</p>";
+const c = document.getElementById("choices");
+c.innerHTML="";
+choices.forEach(choice=>{
+let b=document.createElement("button");
+b.innerText=choice.text;
+b.onclick=()=>{
+choice.action();
+};
+c.appendChild(b);
+});
+updateStats();
+}
+
+function next(){
+if(lives<=0 || sanity<=0){
+endGame("Kamu tumbang dalam kegelapan...");
+return;
+}
+randomScene();
+}
+
+function triggerBoss(){
+if(bossAppeared) return;
+bossAppeared=true;
+
+let text="SOSOK BESAR muncul di depanmu... Ini akhir perjalananmu.";
+let choices=[];
+
+if(inventory.includes("Pisau")){
+choices.push({
+text:"Lawan dengan Pisau",
+action:()=>{ generateEnding(1); }
+});
+}
+if(inventory.includes("Jimat")){
+choices.push({
+text:"Gunakan Jimat",
+action:()=>{ generateEnding(2); }
+});
+}
+
+choices.push({
+text:"Lari",
+action:()=>{ generateEnding(3); }
+});
+
+renderScene(text, choices);
+}
+
+function generateEnding(type){
+let endingNumber = ((fear + sanity + lives + type*7) % 50) + 1;
+endGame("ENDING #"+endingNumber+
+"<br><br>Takdirmu berakhir di jalur ke-"+endingNumber+".");
+}
+
+function endGame(text){
+document.getElementById("story").innerHTML="";
+document.getElementById("choices").innerHTML="";
+document.getElementById("ending").innerHTML=
+"<h2>"+text+"</h2><br><button onclick='restart()'>Main Lagi</button>";
+}
+
+function restart(){
+lives=3;
+sanity=100;
+inventory=[];
+sceneCount=0;
+fear=0;
+bossAppeared=false;
+document.getElementById("ending").innerHTML="";
+randomScene();
+}
+
+randomScene();
 
 </script>
-
 </body>
-      </html>
+</html>
